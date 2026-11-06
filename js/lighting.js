@@ -3,7 +3,6 @@ import { ROOM_W, ROOM_H, ROOM_D, SCR_W, SCR_H, SCR_Z, SCR_Y } from './config.js'
 
 let beam;
 let lensGlow;
-let dustParticles;
 
 export function buildBeam(scene) {
   // Volumetric projector cone
@@ -39,77 +38,6 @@ export function buildBeam(scene) {
   lensGlow = new THREE.PointLight(0xddeeff, 0.5, 4);
   lensGlow.position.set(0, 10.8, SCR_Z + 16.1);
   scene.add(lensGlow);
-}
-
-export function buildDust(scene) {
-  const count = 350;
-  const geo = new THREE.BufferGeometry();
-  const positions = new Float32Array(count * 3);
-  const speeds = new Float32Array(count * 3);
-  const phases = new Float32Array(count);
-
-  for (let i = 0; i < count; i++) {
-    const t = Math.random();
-    const z = THREE.MathUtils.lerp(SCR_Z + 2, SCR_Z + 16, t);
-    const coneRadius = THREE.MathUtils.lerp(11.0, 1.0, t);
-
-    positions[i * 3]     = (Math.random() - 0.5) * coneRadius * 1.4;
-    positions[i * 3 + 1] = 6.0 + (Math.random() - 0.5) * 5.0;
-    positions[i * 3 + 2] = z;
-
-    speeds[i * 3]     = (Math.random() - 0.5) * 0.002;
-    speeds[i * 3 + 1] = Math.random() * 0.0015 + 0.0008;
-    speeds[i * 3 + 2] = (Math.random() - 0.5) * 0.002;
-
-    phases[i] = Math.random() * Math.PI * 2;
-  }
-
-  geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
-  // Circular soft blurred particle texture
-  const pCanvas = document.createElement('canvas');
-  pCanvas.width = pCanvas.height = 32;
-  const pCtx = pCanvas.getContext('2d');
-  const grad = pCtx.createRadialGradient(16, 16, 0, 16, 16, 16);
-  grad.addColorStop(0, 'rgba(255, 255, 255, 0.85)');
-  grad.addColorStop(0.35, 'rgba(235, 245, 255, 0.35)');
-  grad.addColorStop(1, 'rgba(235, 245, 255, 0.0)');
-  pCtx.fillStyle = grad;
-  pCtx.fillRect(0, 0, 32, 32);
-  const pTex = new THREE.CanvasTexture(pCanvas);
-
-  const mat = new THREE.PointsMaterial({
-    size: 0.16,
-    map: pTex,
-    transparent: true,
-    opacity: 0.42,
-    blending: THREE.AdditiveBlending,
-    depthWrite: false
-  });
-
-  dustParticles = new THREE.Points(geo, mat);
-  dustParticles.userData = { speeds, phases, count };
-  scene.add(dustParticles);
-}
-
-export function updateDust(t) {
-  if (!dustParticles) return;
-  const pos = dustParticles.geometry.attributes.position;
-  const { speeds, phases, count } = dustParticles.userData;
-
-  for (let i = 0; i < count; i++) {
-    let y = pos.getY(i) + speeds[i * 3 + 1];
-    let x = pos.getX(i) + Math.sin(t * 0.001 + phases[i]) * 0.002;
-    let z = pos.getZ(i);
-
-    // If drifted above beam, loop back to the bottom
-    if (y > 11.5) {
-      y = 1.0;
-    }
-
-    pos.setXYZ(i, x, y, z);
-  }
-  pos.needsUpdate = true;
 }
 
 export function updateBeam(t) {

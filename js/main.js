@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { videoTexture, updateVideo, updateScreenGlow } from './videoManager.js';
 import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
-import { buildRoom, buildScreen, buildCurtains, buildSeats, buildStage, buildBeam, buildLighting, updateBeam, buildDust, updateDust } from './sceneBuilder.js';
+import { buildRoom, buildScreen, buildCurtains, buildSeats, buildStage, buildBeam, buildLighting, updateBeam } from './sceneBuilder.js';
 import { initPost, updatePost, resizePost } from './postprocessing.js';
 import { initUI } from './ui.js?v=18';
 
@@ -29,7 +29,6 @@ buildCurtains(scene);
 buildSeats(scene);
 buildStage(scene);
 buildBeam(scene);
-buildDust(scene);
 
 RectAreaLightUniformsLib.init();
 const lights = buildLighting(scene);
@@ -61,7 +60,6 @@ function animate(t) {
   updateVideo();
   updateScreenGlow(lights);
   updateBeam(t);
-  updateDust(t);
   
   if (uiDeps.updateCamera) uiDeps.updateCamera();
   post.composer.render();

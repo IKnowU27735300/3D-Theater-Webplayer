@@ -4,6 +4,7 @@
   "description": "A fully local, immersive 3D Web Cinema Player and Virtual Theatre Engine (IMAX-Style Architecture) in your browser.",
   "main": "index.js",
   "scripts": {
+    "build": "echo 'Static build ready'",
     "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

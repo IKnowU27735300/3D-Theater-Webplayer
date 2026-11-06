@@ -1,0 +1,8 @@
+{
+  "version": 2,
+  "framework": null,
+  "buildCommand": null,
+  "outputDirectory": ".",
+  "installCommand": "echo 'Static deployment'",
+  "cleanUrls": true
+}

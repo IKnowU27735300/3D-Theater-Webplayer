@@ -46,6 +46,13 @@
         <span>Choose video file</span>
       </button>
       <input type="file" id="file-input" accept="video/*,.mkv,.mp4,.webm,.mov,.m4v,.ogv" hidden>
+
+      <div class="or-divider"><span>or try a demo video</span></div>
+      <div class="demo-clips-row" style="display:flex; justify-content:center; gap:10px; margin-bottom:12px; flex-wrap:wrap;">
+        <button type="button" class="recent-chip demo-chip" id="demo-oceans-btn" data-url="https://vjs.zencdn.net/v/oceans.mp4" data-title="Oceans (Trailer)">🎬 Oceans Trailer</button>
+        <button type="button" class="recent-chip demo-chip" id="demo-flower-btn" data-url="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" data-title="Flowers (HD)">🌸 Flowers Clip</button>
+      </div>
+
       <div class="or-divider"><span>or paste a video URL</span></div>
       <div class="url-row">
         <input type="url" id="url-input" placeholder="https://example.com/movie.mp4" spellcheck="false">

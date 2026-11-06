@@ -292,6 +292,18 @@ export function initUI(deps) {
       });
     }
 
+    // Demo clip buttons
+    ['demo-oceans-btn', 'demo-flower-btn'].forEach(id => {
+      const btn = document.getElementById(id);
+      if (btn) {
+        btn.addEventListener('click', () => {
+          const url = btn.dataset.url;
+          const title = btn.dataset.title;
+          playSource(url, title);
+        });
+      }
+    });
+
     function playTypedUrl() {
       const u = (urlInput && urlInput.value || '').trim();
       if (!u) { showErr('Paste a video URL first.'); return; }
@@ -341,6 +353,14 @@ export function initUI(deps) {
   // --- Server mode: scan the local movies folder ---
   function refreshLibrary() {
     if (!movieGrid) return;
+
+    // When deployed online (e.g. Vercel, Netlify), immediately initialize static mode
+    const isLocal = ['localhost', '127.0.0.1', '::1', ''].includes(window.location.hostname);
+    if (!isLocal) {
+      initStaticMode();
+      return;
+    }
+
     movieGrid.innerHTML = '<div class="loading-spinner">Loading movies...</div>';
     fetch('/api/movies')
       .then(r => {

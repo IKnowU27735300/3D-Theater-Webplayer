@@ -83,11 +83,16 @@ let currentIntensity = 0;
 
 let lastGlowTime = 0;
 
-export function updateScreenGlow(glowLight) {
-  if (!state.hasVideo || video.paused || video.ended || !glowLight) return;
+export function updateScreenGlow(lights) {
+  if (!state.hasVideo || video.paused || video.ended || !lights) return;
+
+  const glowLight = lights.screenGlow || lights;
+  const floorBounce = lights.floorBounce;
+  const lensGlow = lights.lensGlow;
+  const beam = lights.beam;
 
   const now = performance.now();
-  if (now - lastGlowTime > 100) { // Throttle pixel extraction to 10 fps
+  if (now - lastGlowTime > 80) { // ~12 fps sampling for smoother reaction
     lastGlowTime = now;
     sampleCtx.drawImage(video, 0, 0, 16, 16);
     const frame = sampleCtx.getImageData(0, 0, 16, 16).data;
@@ -100,32 +105,36 @@ export function updateScreenGlow(glowLight) {
     }
     const count = frame.length / 4;
   
-  // Three.js colors require setting from sRGB if source is sRGB
-  targetColor.setRGB(r/255/count, g/255/count, b/255/count, THREE.SRGBColorSpace);
+    targetColor.setRGB(r/255/count, g/255/count, b/255/count, THREE.SRGBColorSpace);
 
-  // Get true luminance of the scene before modifying the color
-  const luminance = 0.2126 * targetColor.r + 0.7152 * targetColor.g + 0.0722 * targetColor.b;
-
-    // Extract HSL to boost saturation and normalize lightness.
-    // This ensures bright daylight scenes don't just emit pure white,
-    // but instead emit the beautiful true dominant hue of the scene.
+    const luminance = 0.2126 * targetColor.r + 0.7152 * targetColor.g + 0.0722 * targetColor.b;
     const hsl = {h: 0, s: 0, l: 0};
     targetColor.getHSL(hsl);
     
-    // Boost saturation by 50% for a more cinematic lighting feel, cap at 1.0
-    // Normalize lightness to 0.5 so the color itself doesn't influence brightness
-    targetColor.setHSL(hsl.h, Math.min(1.0, hsl.s * 1.5), 0.5);
-
-    // Intensity is now purely driven by the true luminance. 
-    // Lowered the multiplier so it doesn't overexpose the front stage.
-    targetIntensity = luminance * 20.0;
+    targetColor.setHSL(hsl.h, Math.min(1.0, hsl.s * 1.45), 0.5);
+    targetIntensity = luminance * 22.0;
   }
 
   currentColor.lerp(targetColor, 0.08); // Smooth color transition
-  currentIntensity += (targetIntensity - currentIntensity) * 0.08; // Smooth intensity transition
+  currentIntensity += (targetIntensity - currentIntensity) * 0.08;
 
-  glowLight.color.copy(currentColor);
-  glowLight.intensity = currentIntensity;
+  if (glowLight) {
+    glowLight.color.copy(currentColor);
+    glowLight.intensity = currentIntensity;
+  }
+
+  if (floorBounce) {
+    floorBounce.color.copy(currentColor);
+    floorBounce.intensity = currentIntensity * 0.35;
+  }
+
+  if (lensGlow) {
+    lensGlow.color.copy(currentColor);
+  }
+
+  if (beam && beam.material) {
+    beam.material.color.lerp(currentColor, 0.05);
+  }
 }
 
 export function loadVideoUrl(url, filename, onLoaded) {

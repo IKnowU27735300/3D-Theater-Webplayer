@@ -137,6 +137,20 @@ export function buildRoom(scene) {
       const frame = new THREE.Mesh(panelFrameGeo, panelFrameMat);
       const fz = z + (side === -1 ? 0.03 : -0.03);
       frame.position.set(wx, cy*0.7, fz); frame.rotation.y = ry; g.add(frame);
+
+      // Modern architectural vertical wall sconce
+      const sconceMat = new THREE.MeshStandardMaterial({ color: 0xc8a96e, metalness: 0.8, roughness: 0.25 });
+      const sconce = new THREE.Mesh(new THREE.BoxGeometry(0.06, 1.2, 0.12), sconceMat);
+      sconce.position.set(wx + (side === -1 ? 0.04 : -0.04), cy * 0.7, z);
+      g.add(sconce);
+
+      const emitter = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.9, 0.06), new THREE.MeshBasicMaterial({ color: 0xffe6c4 }));
+      emitter.position.set(wx + (side === -1 ? 0.07 : -0.07), cy * 0.7, z);
+      g.add(emitter);
+
+      const sLight = new THREE.PointLight(0xffbe76, 0.15, 6, 1.8);
+      sLight.position.set(wx + (side === -1 ? 0.35 : -0.35), cy * 0.7, z);
+      g.add(sLight);
     }
   }
 

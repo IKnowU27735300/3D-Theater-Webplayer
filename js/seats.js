@@ -1,36 +1,50 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 
-function makeSeatTexture(size=256) {
-  const c = document.createElement('canvas'); c.width=c.height=size;
+function makeSeatTexture(size=512) {
+  const c = document.createElement('canvas'); c.width = c.height = size;
   const ctx = c.getContext('2d');
-  // Deep velvet red
-  const g = ctx.createRadialGradient(size/2,size/2,0,size/2,size/2,size/2);
-  g.addColorStop(0,'#5a0e0e'); g.addColorStop(1,'#2a0505');
-  ctx.fillStyle=g; ctx.fillRect(0,0,size,size);
-  // Velvet microfiber noise
-  for(let i=0;i<5000;i++){
-    const x=Math.random()*size,y=Math.random()*size;
-    const v=Math.floor(Math.random()*20+40);
-    ctx.fillStyle=`rgba(${v},${Math.floor(v*0.12)},${Math.floor(v*0.12)},0.4)`;
-    ctx.fillRect(x,y,1,2);
+  
+  // Luxury cinema velvet crimson gradient
+  const g = ctx.createRadialGradient(size/2, size/2, 0, size/2, size/2, size/2);
+  g.addColorStop(0, '#5e0d0d');
+  g.addColorStop(0.7, '#380606');
+  g.addColorStop(1, '#1e0303');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, size, size);
+
+  // High-density microfiber velvet pile
+  for (let i = 0; i < 9000; i++) {
+    const x = Math.random() * size, y = Math.random() * size;
+    const v = Math.floor(Math.random() * 25 + 50);
+    ctx.fillStyle = `rgba(${v}, ${Math.floor(v * 0.14)}, ${Math.floor(v * 0.14)}, 0.35)`;
+    ctx.fillRect(x, y, 1.2, 2.2);
   }
+
+  // Subtle vertical seam stitching
+  ctx.strokeStyle = 'rgba(20, 2, 2, 0.45)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(size * 0.28, 0); ctx.lineTo(size * 0.28, size);
+  ctx.moveTo(size * 0.72, 0); ctx.lineTo(size * 0.72, size);
+  ctx.stroke();
+
   const t = new THREE.CanvasTexture(c);
   return t;
 }
 
-function makeLeatherBumpMap(size=256) {
-  const c = document.createElement('canvas'); c.width=c.height=size;
+function makeLeatherBumpMap(size=512) {
+  const c = document.createElement('canvas'); c.width = c.height = size;
   const ctx = c.getContext('2d');
   ctx.fillStyle = '#808080';
-  ctx.fillRect(0,0,size,size);
-  // Leather micro-crevices
-  for(let i=0;i<6000;i++){
-    const x=Math.random()*size,y=Math.random()*size;
-    const v = Math.random() > 0.5 ? 255 : 0; // high contrast for sharp bumps
-    ctx.fillStyle=`rgba(${v},${v},${v},0.15)`;
-    // stretch slightly to simulate grain
-    ctx.fillRect(x,y, Math.random()*2+1, Math.random()*1+1);
+  ctx.fillRect(0, 0, size, size);
+  
+  // High-frequency realistic micro-pores
+  for (let i = 0; i < 10000; i++) {
+    const x = Math.random() * size, y = Math.random() * size;
+    const v = Math.random() > 0.5 ? 240 : 15;
+    ctx.fillStyle = `rgba(${v}, ${v}, ${v}, 0.18)`;
+    ctx.fillRect(x, y, Math.random() * 2 + 1, Math.random() * 1.5 + 1);
   }
   const t = new THREE.CanvasTexture(c);
   t.wrapS = t.wrapT = THREE.RepeatWrapping;
@@ -44,29 +58,33 @@ export function buildSeats(scene) {
   const seatTex = makeSeatTexture();
   const bumpTex = makeLeatherBumpMap();
   
-  // High-end luxury leather material
+  // Ultra-realistic luxury plush velvet physical material
   const sm = new THREE.MeshPhysicalMaterial({ 
     map: seatTex, 
     bumpMap: bumpTex,
-    bumpScale: 0.008,
-    color: 0x400808, 
-    roughness: 0.85,
-    metalness: 0.05,
-    clearcoat: 0.2,
-    clearcoatRoughness: 0.35
+    bumpScale: 0.009,
+    color: 0x480a0a, 
+    roughness: 0.75,
+    metalness: 0.06,
+    sheen: 0.95,
+    sheenColor: new THREE.Color(0xa52222),
+    sheenRoughness: 0.42,
+    clearcoat: 0.12,
+    clearcoatRoughness: 0.4
   });
   
   const am = new THREE.MeshPhysicalMaterial({ 
-    color: 0x080608, 
-    roughness: 0.7, 
-    metalness: 0.1,
-    clearcoat: 0.3,
-    clearcoatRoughness: 0.5
+    color: 0x0c090c, 
+    roughness: 0.48, 
+    metalness: 0.12,
+    clearcoat: 0.45,
+    clearcoatRoughness: 0.3
   });
   
-  const legMat = new THREE.MeshStandardMaterial({ color:0x1a1218, roughness:0.6, metalness:0.3 });
-  const stm = new THREE.MeshStandardMaterial({ color:0x100810, roughness:0.98 });
-  const stepLight = new THREE.MeshBasicMaterial({ color:0xff6600 });
+  const legMat = new THREE.MeshStandardMaterial({ color: 0x141014, roughness: 0.5, metalness: 0.5 });
+  const stm = new THREE.MeshStandardMaterial({ color: 0x0e060e, roughness: 0.95 });
+  const stepLight = new THREE.MeshBasicMaterial({ color: 0xff6600 });
+  const cupRimMat = new THREE.MeshStandardMaterial({ color: 0x303036, metalness: 0.85, roughness: 0.25 });
 
   const ROWS=16, SPR=26, SS=0.92, RD=1.08, SR=0.24, SZ=-3.0;
   const count = ROWS * SPR;

@@ -6,3 +6,4 @@
   "installCommand": "echo 'Static deployment'",
   "cleanUrls": true
 }
+

@@ -30,8 +30,21 @@
 <!-- WELCOME SCREEN -->
 <div id="welcome-screen" style="display:none">
   <div id="drop-zone">
-    <h1 class="welcome-title">3D Cinema Media Library</h1>
-    <p class="welcome-subtitle" id="welcome-sub">Select a movie from your local server</p>
+    <div class="drop-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/>
+        <line x1="7" y1="2" x2="7" y2="22"/>
+        <line x1="17" y1="2" x2="17" y2="22"/>
+        <line x1="2" y1="12" x2="22" y2="12"/>
+        <line x1="2" y1="7" x2="7" y2="7"/>
+        <line x1="2" y1="17" x2="7" y2="17"/>
+        <line x1="17" y1="17" x2="22" y2="17"/>
+        <line x1="17" y1="7" x2="22" y2="7"/>
+      </svg>
+    </div>
+    <h1 class="welcome-title">3D Cinema Player</h1>
+    <p class="welcome-subtitle" id="welcome-sub">Drop your movie here or pick a file to watch in 3D</p>
+    <p class="welcome-sub2">Virtual IMAX Theatre Engine</p>
 
     <!-- Shown only when the local media server is running -->
     <button id="open-folder-btn" class="folder-btn" title="Open the movies folder in File Explorer" style="display:none">
@@ -43,11 +56,19 @@
     <div id="static-loaders" style="display:none">
       <button id="pick-file-btn" class="picker-btn" title="Choose a video from this device">
         <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
-        <span>Choose video file</span>
+        <span>🎬 Select Movie from Device</span>
       </button>
-      <input type="file" id="file-input" accept="video/*,.mkv,.mp4,.webm,.mov,.m4v,.ogv" hidden>
+      <input type="file" id="file-input" accept="video/*,.mkv,.mp4,.webm,.mov,.m4v,.ogv,.avi" hidden>
 
-      <div class="or-divider"><span>or try a demo video</span></div>
+      <div style="margin-top: 8px;">
+        <button id="pick-sub-btn" class="picker-btn picker-btn-sub" title="Add external subtitle file (.srt or .vtt)">
+          <svg viewBox="0 0 24 24"><path d="M19 4H5c-1.11 0-2 .9-2 2v12c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-8 7H9.5v-.5h-2v3h2V13H11v1.5c0 .28-.22.5-.5.5h-3c-.28 0-.5-.22-.5-.5v-4c0-.28.22-.5.5-.5h3c.28 0 .5.22.5.5V11zm7 0h-1.5v-.5h-2v3h2V13H18v1.5c0 .28-.22.5-.5.5h-3c-.28 0-.5-.22-.5-.5v-4c0-.28.22-.5.5-.5h3c.28 0 .5.22.5.5V11z"/></svg>
+          <span>Optional: Add Subtitles (.srt / .vtt)</span>
+        </button>
+        <input type="file" id="sub-file-input" accept=".srt,.vtt" hidden>
+      </div>
+
+      <div class="or-divider"><span>or try a demo trailer</span></div>
       <div class="demo-clips-row" style="display:flex; justify-content:center; gap:10px; margin-bottom:12px; flex-wrap:wrap;">
         <button type="button" class="recent-chip demo-chip" id="demo-oceans-btn" data-url="https://vjs.zencdn.net/v/oceans.mp4" data-title="Oceans (Trailer)">🎬 Oceans Trailer</button>
         <button type="button" class="recent-chip demo-chip" id="demo-flower-btn" data-url="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" data-title="Flowers (HD)">🌸 Flowers Clip</button>
@@ -58,7 +79,7 @@
         <input type="url" id="url-input" placeholder="https://example.com/movie.mp4" spellcheck="false">
         <button id="url-play-btn" class="picker-btn picker-btn-slim">Play</button>
       </div>
-      <p class="loader-hint">Nothing is uploaded &mdash; your files are read right here in the browser.</p>
+      <p class="loader-hint">🔒 100% Private & In-Browser &mdash; Your movie stays on your device and is never uploaded anywhere.</p>
       <div id="recent-wrap" style="display:none">
         <div class="or-divider"><span>recent</span></div>
         <div id="recent-list" class="recent-list"></div>

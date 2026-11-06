@@ -280,6 +280,8 @@ export function initUI(deps) {
 
     const fileInput = document.getElementById('file-input');
     const pickBtn = document.getElementById('pick-file-btn');
+    const subFileInput = document.getElementById('sub-file-input');
+    const pickSubBtn = document.getElementById('pick-sub-btn');
     const urlInput = document.getElementById('url-input');
     const urlBtn = document.getElementById('url-play-btn');
 
@@ -291,6 +293,65 @@ export function initUI(deps) {
         playSource(URL.createObjectURL(f), f.name);
       });
     }
+
+    function handleSubtitleFile(file) {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        let content = e.target.result;
+        if (file.name.toLowerCase().endsWith('.srt')) {
+          content = 'WEBVTT\n\n' + content
+            .replace(/\r\n|\r/g, '\n')
+            .replace(/(\d{2}:\d{2}:\d{2}),(\d{3})/g, '$1.$2');
+        }
+        const blob = new Blob([content], { type: 'text/vtt' });
+        const url = URL.createObjectURL(blob);
+        loadSubtitleTrack(url);
+        showErr(`Subtitles loaded: ${file.name}`);
+      };
+      reader.readAsText(file);
+    }
+
+    if (pickSubBtn && subFileInput) {
+      pickSubBtn.addEventListener('click', () => subFileInput.click());
+      subFileInput.addEventListener('change', () => {
+        const f = subFileInput.files && subFileInput.files[0];
+        if (f) handleSubtitleFile(f);
+      });
+    }
+
+    // Drag-and-drop file support for local videos and subtitles
+    function handleDroppedFiles(fileList) {
+      if (!fileList || fileList.length === 0) return;
+      const files = Array.from(fileList);
+      const videoFile = files.find(f => /\.(mp4|mkv|webm|mov|m4v|ogv|avi)$/i.test(f.name));
+      const subFile = files.find(f => /\.(srt|vtt)$/i.test(f.name));
+
+      if (videoFile) {
+        playSource(URL.createObjectURL(videoFile), videoFile.name);
+      }
+      if (subFile) {
+        handleSubtitleFile(subFile);
+      }
+    }
+
+    const dropZone = document.getElementById('drop-zone');
+    window.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      if (dropZone) dropZone.classList.add('drag-over');
+    });
+    window.addEventListener('dragleave', (e) => {
+      if (e.relatedTarget === null && dropZone) {
+        dropZone.classList.remove('drag-over');
+      }
+    });
+    window.addEventListener('drop', (e) => {
+      e.preventDefault();
+      if (dropZone) dropZone.classList.remove('drag-over');
+      if (e.dataTransfer && e.dataTransfer.files) {
+        handleDroppedFiles(e.dataTransfer.files);
+      }
+    });
 
     // Demo clip buttons
     ['demo-oceans-btn', 'demo-flower-btn'].forEach(id => {

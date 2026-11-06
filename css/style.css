@@ -220,6 +220,26 @@ html, body {
 .picker-btn svg { width: 19px; height: 19px; fill: #0a0604; }
 .picker-btn:hover { background-position: 100% 0; transform: translateY(-2px); box-shadow: 0 8px 22px rgba(200,169,110,.28); }
 .picker-btn-slim { padding: 12px 22px; margin: 0; flex: 0 0 auto; font-size: 14px; }
+.picker-btn-sub {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(200, 169, 110, 0.35);
+  color: var(--gold);
+  font-size: 13px;
+  padding: 8px 18px;
+  font-weight: 500;
+  box-shadow: none;
+}
+.picker-btn-sub:hover {
+  background: rgba(200, 169, 110, 0.15);
+  border-color: var(--gold);
+  transform: translateY(-1px);
+  box-shadow: none;
+}
+.picker-btn-sub svg {
+  fill: var(--gold);
+  width: 16px;
+  height: 16px;
+}
 
 .or-divider {
   display: flex; align-items: center; gap: 14px;
